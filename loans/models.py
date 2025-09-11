@@ -42,16 +42,17 @@ class Loan(models.Model):
     
     def calculate_monthly_installment(self):
         """Calculate monthly installment using compound interest formula"""
+        from decimal import Decimal
         principal = float(self.loan_amount)
         rate = float(self.interest_rate) / 100 / 12  # monthly rate
         n = self.tenure
         
         if rate == 0:
-            return principal / n
+            return Decimal(str(principal / n))
         
         # EMI = P * r * (1 + r)^n / ((1 + r)^n - 1)
         emi = principal * rate * (1 + rate) ** n / ((1 + rate) ** n - 1)
-        return round(emi, 2)
+        return Decimal(str(round(emi, 2)))
     
     def save(self, *args, **kwargs):
         if not self.monthly_repayment:

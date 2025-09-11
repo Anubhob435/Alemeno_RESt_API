@@ -81,9 +81,9 @@ def calculate_credit_score(customer):
         score += 10
     
     # Loan approved volume (20% weight)
-    if current_loans_sum <= customer.approved_limit * 0.5:
+    if current_loans_sum <= customer.approved_limit * Decimal('0.5'):
         score += 20
-    elif current_loans_sum <= customer.approved_limit * 0.8:
+    elif current_loans_sum <= customer.approved_limit * Decimal('0.8'):
         score += 15
     else:
         score += 10
@@ -110,11 +110,11 @@ def calculate_monthly_installment(loan_amount, interest_rate, tenure):
     n = tenure
     
     if rate == 0:
-        return principal / n
+        return Decimal(str(principal / n))
     
     # EMI = P * r * (1 + r)^n / ((1 + r)^n - 1)
     emi = principal * rate * (1 + rate) ** n / ((1 + rate) ** n - 1)
-    return round(emi, 2)
+    return Decimal(str(round(emi, 2)))
 
 
 @api_view(['POST'])
@@ -153,7 +153,7 @@ def check_eligibility(request):
     current_emis = Loan.objects.filter(
         customer=customer,
         end_date__gte=date.today()
-    ).aggregate(total_emi=Sum('monthly_repayment'))['total_emi'] or 0
+    ).aggregate(total_emi=Sum('monthly_repayment'))['total_emi'] or Decimal('0')
     
     monthly_installment = calculate_monthly_installment(loan_amount, interest_rate, tenure)
     total_emi = current_emis + monthly_installment
@@ -215,7 +215,7 @@ def create_loan(request):
     current_emis = Loan.objects.filter(
         customer=customer,
         end_date__gte=date.today()
-    ).aggregate(total_emi=Sum('monthly_repayment'))['total_emi'] or 0
+    ).aggregate(total_emi=Sum('monthly_repayment'))['total_emi'] or Decimal('0')
     
     monthly_installment = calculate_monthly_installment(loan_amount, interest_rate, tenure)
     total_emi = current_emis + monthly_installment

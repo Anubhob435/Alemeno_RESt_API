@@ -1,20 +1,7 @@
+# Option 2: Complete local setup with PostgreSQL and data ingestion
 version: '3.8'
 
 services:
-  # Option 1: Use existing external database (Neon)
-  web-external-db:
-    build: .
-    entrypoint: ["/usr/local/bin/docker-entrypoint.sh"]
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    environment:
-      - DEBUG=1
-    profiles:
-      - external-db
-
-  # Option 2: Use local PostgreSQL with data ingestion
   db:
     image: postgres:15
     environment:
@@ -25,24 +12,21 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    profiles:
-      - local-db
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
-    profiles:
-      - local-db
-      - celery
+    restart: unless-stopped
 
-  web-local-db:
+  web:
     build: .
     entrypoint: ["/usr/local/bin/docker-entrypoint-with-data.sh"]
     volumes:
       - .:/app
     ports:
-      - "8001:8000"
+      - "8000:8000"
     depends_on:
       - db
       - redis
@@ -55,10 +39,8 @@ services:
       - DJANGO_SUPERUSER_USERNAME=admin
       - DJANGO_SUPERUSER_PASSWORD=admin123
       - DJANGO_SUPERUSER_EMAIL=admin@example.com
-    profiles:
-      - local-db
+    restart: unless-stopped
 
-  # Celery worker (optional)
   celery:
     build: .
     command: celery -A Alemeno_RESt_API worker --loglevel=info
@@ -73,8 +55,7 @@ services:
       - PGDATABASE=credit_approval_db
       - PGUSER=postgres
       - PGPASSWORD=password
-    profiles:
-      - celery
+    restart: unless-stopped
 
 volumes:
   postgres_data:

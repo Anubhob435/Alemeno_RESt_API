@@ -1,0 +1,14 @@
+# Option 1: Use existing external database (like Neon)
+version: '3.8'
+
+services:
+  web:
+    build: .
+    entrypoint: ["/usr/local/bin/docker-entrypoint.sh"]
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DEBUG=1
+    restart: unless-stopped

@@ -220,8 +220,7 @@ def run_comprehensive_test():
     
     print("\n" + "=" * 60)
     print("✅ All API tests completed!")
-    print(f"🌐 Your API is live at: {BASE_URL}")
-    print("🎯 Ready for production use!")
+    print(f"🌐 API is live at: {BASE_URL}")
 
 if __name__ == "__main__":
     run_comprehensive_test()

@@ -10,3 +10,7 @@ __pycache__/
 *.egg-info
 .kiro/
 .env
+db.sqlite3
+staticfiles/
+*.log
+.env

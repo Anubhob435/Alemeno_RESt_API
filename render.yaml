@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: credit-approval-api
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn Alemeno_RESt_API.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: false
+      - key: PGHOST
+        fromDatabase:
+          name: credit-approval-db
+          property: host
+      - key: PGDATABASE
+        fromDatabase:
+          name: credit-approval-db
+          property: database
+      - key: PGUSER
+        fromDatabase:
+          name: credit-approval-db
+          property: user
+      - key: PGPASSWORD
+        fromDatabase:
+          name: credit-approval-db
+          property: password
+
+databases:
+  - name: credit-approval-db
+    databaseName: credit_approval_db
+    user: credit_user

@@ -11,6 +11,13 @@ class Command(BaseCommand):
     help = 'Ingest customer and loan data from Excel files'
 
     def handle(self, *args, **options):
+        # Check if data already exists to avoid duplicate ingestion
+        if Customer.objects.exists():
+            self.stdout.write(
+                self.style.WARNING('Data already exists. Skipping ingestion.')
+            )
+            return
+            
         self.stdout.write('Starting data ingestion...')
         
         # Ingest customer data

@@ -19,9 +19,21 @@ from .serializers import (
 
 def api_home(request):
     """API documentation home"""
+    from django.db import connection
+    
+    # Simple health check
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        db_status = "connected"
+    except:
+        db_status = "disconnected"
+    
     return JsonResponse({
         "message": "Credit Approval System API",
         "version": "1.0",
+        "status": "healthy",
+        "database": db_status,
         "endpoints": {
             "register": "POST /api/register/ - Register a new customer",
             "check_eligibility": "POST /api/check-eligibility/ - Check loan eligibility",
